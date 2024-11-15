@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex flex-column justify-content-center min-vh-100">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          Shorten URL
+        </div>
+        <div class="card-body">
+          <form method="POST" action="{% url 'home' %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <input type="text" name="long_url" placeholder="Enter URL to shorten" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Shorten</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+  {% if short_url %}
+  <p>Your shortened URL is: <a href="{{ short_url }}">{{ short_url }}</a></p>
+  {% endif %}
+</div>
+</div>
+{% endblock %}

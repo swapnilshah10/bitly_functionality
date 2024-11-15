@@ -1,0 +1,9 @@
+{
+  "key": "AIzaSyCrB9e21ojlqFjuS4kbhEiAPEcORwcia-4",
+  "url": "https://www.googleapis.com/youtube/v3/playlistItems?maxResults=50&part=snippet%2C+id&playlistId=paylist&key=AIzaSyCrB9e21ojlqFjuS4kbhEiAPEcORwcia-4",
+  "all": "UUzcKPLI9b0z-cUjCw6GFifA",
+  "shorts": "PLc6bUwTVKwCPOYLwfpKp5uBxaK9dSl5Qx",
+  "tdm": "PLc6bUwTVKwCM07hH4vbznPPr2K68Ji_YR",
+  "drills": "PLc6bUwTVKwCMfjMH3feuA0eGYabjU6A75",
+  "chess" : "PLKzh2d_URkugZoNk17iGK4WXp2JaQHtjf"
+}

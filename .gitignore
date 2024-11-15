@@ -1,0 +1,5 @@
+.cache 
+.ipython 
+.virtualenvs
+.local
+.bash_history
