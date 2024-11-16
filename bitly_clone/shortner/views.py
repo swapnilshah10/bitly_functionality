@@ -6,13 +6,15 @@ from .models import FeatureToggle, Url,Ip , UniqueIp
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from datetime import datetime
 # import requests
 from django.utils import timezone
 from rest_framework.views import APIView
 import requests
-from datetime import date
+from datetime import date   
 from django.http import JsonResponse
+from django.db.models import F
+import threading    
+from django.utils.timezone import now
 
 # def getinfo(ip):
 #     response = requests.get(f'https://ipapi.co/{ip}/json')
@@ -21,13 +23,7 @@ from django.http import JsonResponse
 
 
 def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    ip = ""
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+    return request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0] or request.META.get('REMOTE_ADDR')
 
 class HomeView(View):
     def get(self, request):
@@ -52,31 +48,54 @@ class HomeView(View):
             context = {'form': form}
             return render(request, 'shortner/base.html', context)
 
+
+
+def increment_clicks(url_id):
+    """
+    Increment the clicks for a given URL ID.
+    """
+    Url.objects.filter(pk=url_id).update(clicks=F('clicks') + 1)
+
+def save_ipp(request, method=None, page=None):
+    """
+    Saves the client's IP address and additional details to the database.
+    """
+    ip = get_client_ip(request)
+    Ip.objects.get_or_create(ip=str(ip), method=method, page=page, time=now())
+
+
 class UrlRedirectView(View):
     def get(self, request, short_url):
-        ipp =  Ip.objects.get_or_create(ip = str(get_client_ip(request)) , method = "get" , page = short_url , time = timezone.now())
+        threading.Thread(target=save_ipp, args=(request, "get", short_url)).start()
+        # ipp =  Ip.objects.get_or_create(ip = str(get_client_ip(request)) , method = "get" , page = short_url , time = timezone.now())
         url_obj = get_object_or_404(Url, short_url=short_url)
-        url_obj.clicks += 1
-        url_obj.save()
+        # url_obj.clicks += 1
+        # url_obj.save()
+        threading.Thread(target=increment_clicks, args=(url_obj.pk,)).start()
         return redirect(url_obj.long_url)
 
 
 @api_view(['GET', 'POST'])
 def get_url(request, short_url):
     if request.method == 'GET':
-        ip = str(get_client_ip(request))
-        ipp =  Ip.objects.get_or_create(ip = ip ,method = "get" , page = short_url , time = timezone.now())
+        # ip = str(get_client_ip(request))
+        # ipp =  Ip.objects.get_or_create(ip = ip ,method = "get" , page = short_url , time = timezone.now())
+
+        threading.Thread(target=save_ipp, args=(request, "get", short_url)).start()
         #     except:
         #         pass
         url_obj = get_object_or_404(Url, short_url=short_url)
         # url_obj.clicks += 1
         # url_obj.save()
+        threading.Thread(target=increment_clicks, args=(url_obj.pk,)).start()
         formatted_date = url_obj.created_at.strftime("%Y-%m-%d %H:%M")
         response = {"url": url_obj.long_url , "created_at":formatted_date , "created_by_ip" : url_obj.ip , "created_by" : url_obj.name}
         return Response(response, status=status.HTTP_200_OK)
     elif request.method == 'POST':
-        ip = str(get_client_ip(request))
-        ipp =  Ip.objects.get_or_create(ip = ip ,method = "post" ,  time = timezone.now())
+        # ip = str(get_client_ip(request))
+        # ipp =  Ip.objects.get_or_create(ip = ip ,method = "post" ,  time = timezone.now())
+        threading.Thread(target=save_ipp, args=(request, "get", short_url)).start()
+
         form = (request.data)
         short_url = ""
         url_obj = None
