@@ -19,5 +19,6 @@ from django.urls import path , include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/' , include('ytcache.urls')),
-    path('' , include('shortner.urls'))
+    path('notes/' , include('notes.urls')),
+    path('' , include('shortner.urls')),
 ]
