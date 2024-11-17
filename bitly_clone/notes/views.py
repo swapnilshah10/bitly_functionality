@@ -9,6 +9,23 @@ from .serializers import  NoteSerializer
 from django.db import IntegrityError
 
 @api_view(['POST'])
+def userExists(request):
+    username = request.data.get('username')
+
+    # Validate input
+    if not username:
+        return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the username exists in the database
+    exists = CustomUser.objects.filter(username=username).exists()
+
+    if exists:
+        return Response({'exists': True}, status=status.HTTP_200_OK)
+    else:
+        return Response({'exists': False}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
 def create_user(request):
     username = request.data.get('username')
     password = request.data.get('password')
