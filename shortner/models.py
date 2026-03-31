@@ -2,7 +2,6 @@ from django.db import models
 from django.utils import timezone
 import string
 import random
-from django.db import models
 
 
 class Url(models.Model):
@@ -10,6 +9,7 @@ class Url(models.Model):
     short_url = models.CharField(max_length=20, unique=True)
     clicks = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(default=timezone.now)
+    ip = models.CharField(max_length=100 , blank = True , default = "")
 
     def save(self, *args, **kwargs):
         if not self.short_url:
@@ -22,8 +22,19 @@ class Url(models.Model):
     def get_absolute_url(self):
         return self.long_url
 
+class Ip(models.Model):
+    ip = models.CharField(max_length=100 , blank = True , default = "")
+    latitude = models.CharField(max_length=100 , blank = True , default = "")
+    longitude  = models.CharField(max_length=100 , blank = True , default = "")
+    city = models.CharField(max_length=100 , blank = True , default = "")
+    def __str__(self):
+        return self.ip +" " +self.city
 
 def create_short_url():
     chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
     short_id = ''.join(random.choices(chars, k=6))
+    while Url.objects.filter(short_url=short_id).exists():
+      short_id = ''.join(random.choices(chars, k=6))
     return short_id
+
+
