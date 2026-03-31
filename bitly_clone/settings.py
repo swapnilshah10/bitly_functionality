@@ -25,9 +25,13 @@ SECRET_KEY = 'django-insecure-rnsl_r7hi0%k+zsd2%n(tz_cc()&17o*&8*0@pu+kkcsqfo$6p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['swapnil123.pythonanywhere.com' , '*']
+ALLOWED_HOSTS = ['api.silentkillerop.me', '.silentkillerop.me', '*']
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://api.silentkillerop.me',
+    'https://silentkillerop.me',
+    'https://*.silentkillerop.me',
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,13 +49,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'bitly_clone.middleware.RequestLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'bitly_clone.urls'
@@ -135,5 +139,38 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'https://www.silentkillerop.live',
+    'https://api.silentkillerop.me',    
 ]
+
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: [{message}]',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'requests.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'bitly_requests': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

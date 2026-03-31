@@ -10,9 +10,10 @@ import requests
 
 
 def getinfo(ip):
-    response = requests.get(f'https://ipapi.co/{ip}/json')
-    result = response.json()
-    return (result)
+    # response = requests.get(f'https://ipapi.co/{ip}/json')
+    # result = response.json()
+    # return (result)
+    return None
 
 
 def get_client_ip(request):

@@ -1,0 +1,157 @@
+{
+	"info": {
+		"_postman_id": "a4d35e12-b12a-45c1-8899-12345678abcd",
+		"name": "Bitly Clone APIs",
+		"description": "Postman collection for the Bitly Clone URL Shortener APIs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API",
+			"item": [
+				{
+					"name": "Get Original URL (by short code)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/{{short_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{short_url}}",
+								""
+							]
+						},
+						"description": "Retrieves the original long URL associated with a given short URL code. Also increments the click count and updates IP location data."
+					},
+					"response": []
+				},
+				{
+					"name": "Create/Update Short URL (Auto-generate)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"long_url\": \"https://www.example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"create",
+								""
+							]
+						},
+						"description": "Creates a new shortened URL for the given `long_url`. The path parameter does not matter if `short_url` is not in the JSON body."
+					},
+					"response": []
+				},
+				{
+					"name": "Create/Update Short URL (Custom code)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"long_url\": \"https://www.google.com\",\n  \"short_url\": \"my-custom-google\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/my-custom-google/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"my-custom-google",
+								""
+							]
+						},
+						"description": "Creates a new shortened URL with a custom alias `short_url`, or updates an existing one if the short URL already exists."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Frontend Views",
+			"item": [
+				{
+					"name": "Home Page Form",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Home page serving the HTML form to shorten URLs."
+					},
+					"response": []
+				},
+				{
+					"name": "Redirect Short URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{short_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{short_url}}",
+								""
+							]
+						},
+						"description": "A browser route that performs a 302 redirect to the original long URL."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "short_url",
+			"value": "example"
+		}
+	]
+}
